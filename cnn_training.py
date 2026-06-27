@@ -1,13 +1,13 @@
 import os
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import (
-    Conv2D,
-    MaxPooling2D,
-    Flatten,
-    Dense,
-    Dropout
-)
+
+# Keras Components
+Sequential = tf.keras.Sequential
+Conv2D = tf.keras.layers.Conv2D
+MaxPooling2D = tf.keras.layers.MaxPooling2D
+Flatten = tf.keras.layers.Flatten
+Dense = tf.keras.layers.Dense
+Dropout = tf.keras.layers.Dropout
 
 # Dataset Configuration
 DATASET_PATH = "datasets/PlantVillage"
@@ -22,6 +22,7 @@ print("=" * 50)
 print(f"Dataset Path : {DATASET_PATH}")
 print(f"Image Size   : {IMAGE_SIZE}")
 print(f"Batch Size   : {BATCH_SIZE}")
+print(f"Classes      : {NUM_CLASSES}")
 
 # Check Dataset Availability
 if os.path.exists(DATASET_PATH):
@@ -29,7 +30,7 @@ if os.path.exists(DATASET_PATH):
 else:
     print("Dataset Not Found")
 
-# Create CNN Model
+# CNN Model
 model = Sequential([
     Conv2D(
         32,
@@ -37,6 +38,7 @@ model = Sequential([
         activation="relu",
         input_shape=(224, 224, 3)
     ),
+
     MaxPooling2D(pool_size=(2, 2)),
 
     Conv2D(
@@ -44,6 +46,7 @@ model = Sequential([
         (3, 3),
         activation="relu"
     ),
+
     MaxPooling2D(pool_size=(2, 2)),
 
     Flatten(),
