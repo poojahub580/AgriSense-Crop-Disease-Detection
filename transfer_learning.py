@@ -1,368 +1,381 @@
 import os
-import numpy as np
 import tensorflow as tf
 
-from flask import (
-    Flask,
-    jsonify,
-    request
+from tensorflow.keras import Sequential
+from tensorflow.keras import Input
+
+from tensorflow.keras.layers import (
+    GlobalAveragePooling2D,
+    Dense,
+    Dropout
 )
 
-from werkzeug.utils import secure_filename
-from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications import MobileNetV2
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
+from tensorflow.keras.callbacks import (
+    EarlyStopping,
+    ModelCheckpoint
+)
 
 print("=" * 60)
-print("AGRISENSE - API SERVICE MODULE")
+print("AGRISENSE - TRANSFER LEARNING TRAINING")
 print("=" * 60)
 
-
-# ==========================================================
+# ======================================================
 # PROJECT CONFIGURATION
-# ==========================================================
+# ======================================================
 
-MODEL_PATH = "artifacts/crop_disease_model.h5"
+DATASET_PATH = "datasets/PlantVillage"
 
-IMAGE_SIZE = (224, 224)
+MODEL_DIRECTORY = "artifacts"
 
-UPLOAD_FOLDER = "uploads"
+MODEL_NAME = "crop_disease_model.keras"
 
-ALLOWED_EXTENSIONS = {
-    "jpg",
-    "jpeg",
-    "png"
-}
+IMAGE_HEIGHT = 224
+IMAGE_WIDTH = 224
+
+BATCH_SIZE = 32
+
+EPOCHS = 10
+
+LEARNING_RATE = 0.0001
+
+if not os.path.exists(MODEL_DIRECTORY):
+    os.makedirs(MODEL_DIRECTORY)
+
+print("\nPROJECT CONFIGURATION")
+print("-" * 60)
+
+print("Dataset Path :", DATASET_PATH)
+print("Image Size   :", (IMAGE_HEIGHT, IMAGE_WIDTH))
+print("Batch Size   :", BATCH_SIZE)
+print("Epochs       :", EPOCHS)
+print("Learning Rate:", LEARNING_RATE)
+
+# ======================================================
+# DATASET LOADING
+# ======================================================
+
+print("\nLOADING DATASET")
+print("-" * 60)
+
+train_dataset = tf.keras.preprocessing.image_dataset_from_directory(
+    DATASET_PATH,
+    validation_split=0.20,
+    subset="training",
+    seed=123,
+    image_size=(IMAGE_HEIGHT, IMAGE_WIDTH),
+    batch_size=BATCH_SIZE,
+    label_mode="categorical"
+)
+
+validation_dataset = tf.keras.preprocessing.image_dataset_from_directory(
+    DATASET_PATH,
+    validation_split=0.20,
+    subset="validation",
+    seed=123,
+    image_size=(IMAGE_HEIGHT, IMAGE_WIDTH),
+    batch_size=BATCH_SIZE,
+    label_mode="categorical"
+)
+
+CLASS_NAMES = train_dataset.class_names
+
+NUMBER_OF_CLASSES = len(CLASS_NAMES)
+
+print("[SUCCESS] Dataset Loaded")
+
+print("\nCLASS INFORMATION")
+print("-" * 60)
+
+for index, class_name in enumerate(CLASS_NAMES):
+    print(f"{index + 1}. {class_name}")
+
+print("-" * 60)
+
+print("Total Classes :", NUMBER_OF_CLASSES)
+# ======================================================
+# DATASET PREPROCESSING
+# ======================================================
+
+print("\nPREPROCESSING DATASET")
+print("-" * 60)
+
+AUTOTUNE = tf.data.AUTOTUNE
+
+train_dataset = train_dataset.map(
+    lambda x, y: (preprocess_input(x), y),
+    num_parallel_calls=AUTOTUNE
+)
+
+validation_dataset = validation_dataset.map(
+    lambda x, y: (preprocess_input(x), y),
+    num_parallel_calls=AUTOTUNE
+)
+
+train_dataset = train_dataset.prefetch(
+    buffer_size=AUTOTUNE
+)
+
+validation_dataset = validation_dataset.prefetch(
+    buffer_size=AUTOTUNE
+)
+
+print("[SUCCESS] Dataset Optimized")
 
 
-CLASS_NAMES = [
+# ======================================================
+# LOAD PRE-TRAINED MODEL
+# ======================================================
 
-    "Pepper__bell___Bacterial_spot",
-    "Pepper__bell___healthy",
-    "Potato___Early_blight",
-    "Potato___Late_blight",
-    "Potato___healthy",
-    "Tomato_Bacterial_spot",
-    "Tomato_Early_blight",
-    "Tomato_Late_blight",
-    "Tomato_Leaf_Mold",
-    "Tomato_Septoria_leaf_spot",
-    "Tomato_Spider_mites_Two_spotted_spider_mite",
-    "Tomato__Target_Spot",
-    "Tomato__Tomato_YellowLeaf__Curl_Virus",
-    "Tomato__Tomato_mosaic_virus",
-    "Tomato_healthy"
+print("\nLOADING PRE-TRAINED MODEL")
+print("-" * 60)
 
-]
+base_model = MobileNetV2(
+    weights="imagenet",
+    include_top=False,
+    input_shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 3)
+)
+
+print("[SUCCESS] MobileNetV2 Loaded")
 
 
-# ==========================================================
-# FLASK INITIALIZATION
-# ==========================================================
+# ======================================================
+# FREEZE BASE MODEL
+# ======================================================
 
-app = Flask(__name__)
+base_model.trainable = False
 
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-
-if not os.path.exists(UPLOAD_FOLDER):
-
-    os.makedirs(UPLOAD_FOLDER)
-
-print("[SUCCESS] Upload Directory Ready")
-# ==========================================================
-# FILE VALIDATION
-# ==========================================================
-
-def allowed_file(filename):
-
-    if "." not in filename:
-        return False
-
-    extension = filename.rsplit(".", 1)[1].lower()
-
-    return extension in ALLOWED_EXTENSIONS
+print("[SUCCESS] Pre-trained Layers Frozen")
 
 
-# ==========================================================
-# MODEL LOADING
-# ==========================================================
+# ======================================================
+# BUILD TRANSFER LEARNING MODEL
+# ======================================================
 
-def load_prediction_model():
+print("\nBUILDING MODEL")
+print("-" * 60)
 
-    if not os.path.exists(MODEL_PATH):
+transfer_learning_model = Sequential([
 
-        print("[WARNING] Trained model not found.")
-        print("[INFO] API will run in Demo Mode.")
+    Input(shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 3)),
 
-        return None
+    base_model,
 
-    model = tf.keras.models.load_model(
-        MODEL_PATH
+    GlobalAveragePooling2D(),
+
+    Dense(
+        256,
+        activation="relu"
+    ),
+
+    Dropout(0.5),
+
+    Dense(
+        128,
+        activation="relu"
+    ),
+
+    Dropout(0.3),
+
+    Dense(
+        NUMBER_OF_CLASSES,
+        activation="softmax"
     )
 
-    print("[SUCCESS] Trained Model Loaded Successfully")
+])
 
-    return model
+print("[SUCCESS] Model Created")
+# ======================================================
+# COMPILE MODEL
+# ======================================================
 
+print("\nCOMPILING MODEL")
+print("-" * 60)
 
-MODEL = load_prediction_model()
+transfer_learning_model.compile(
 
+    optimizer=tf.keras.optimizers.Adam(
+        learning_rate=LEARNING_RATE
+    ),
 
-# ==========================================================
-# IMAGE PREPROCESSING
-# ==========================================================
+    loss="categorical_crossentropy",
 
-def preprocess_image(image_path):
-
-    img = image.load_img(
-        image_path,
-        target_size=IMAGE_SIZE
-    )
-
-    img_array = image.img_to_array(img)
-
-    img_array = img_array.astype("float32")
-
-    img_array /= 255.0
-
-    img_array = np.expand_dims(
-        img_array,
-        axis=0
-    )
-
-    return img_array
-
-
-# ==========================================================
-# DISEASE PREDICTION
-# ==========================================================
-
-def predict_disease(image_path):
-
-    processed_image = preprocess_image(
-        image_path
-    )
-
-    if MODEL is None:
-
-        return {
-
-            "status": "Demo Mode",
-
-            "prediction": "Tomato_healthy",
-
-            "confidence": "N/A"
-
-        }
-
-    prediction = MODEL.predict(
-
-        processed_image,
-
-        verbose=0
-
-    )
-
-    predicted_index = int(
-
-        np.argmax(prediction)
-
-    )
-
-    confidence = float(
-
-        np.max(prediction)
-
-    ) * 100
-
-    disease = CLASS_NAMES[
-        predicted_index
+    metrics=[
+        "accuracy"
     ]
 
-    return {
-
-        "status": "Prediction Completed",
-
-        "prediction": disease,
-
-        "confidence": round(
-            confidence,
-            2
-        )
-
-    }
-# ==========================================================
-# HOME ROUTE
-# ==========================================================
-
-@app.route("/")
-def home():
-
-    return jsonify({
-
-        "project": "AgriSense Crop Disease Detection",
-
-        "status": "API Running",
-
-        "version": "1.0",
-
-        "developer": "AgriSense"
-
-    })
-
-
-# ==========================================================
-# HEALTH CHECK ROUTE
-# ==========================================================
-
-@app.route("/health")
-def health():
-
-    return jsonify({
-
-        "server": "Online",
-
-        "model_status":
-            "Loaded"
-            if MODEL is not None
-            else
-            "Demo Mode",
-
-        "dataset_classes": len(CLASS_NAMES),
-
-        "image_size": IMAGE_SIZE
-
-    })
-
-
-# ==========================================================
-# DISEASE PREDICTION API
-# ==========================================================
-
-@app.route(
-    "/predict",
-    methods=["POST"]
 )
-def prediction_api():
 
-    try:
-
-        if "image" not in request.files:
-
-            return jsonify({
-
-                "success": False,
-
-                "message": "Image file not found."
-
-            }), 400
-
-        uploaded_image = request.files["image"]
-
-        if uploaded_image.filename == "":
-
-            return jsonify({
-
-                "success": False,
-
-                "message": "No image selected."
-
-            }), 400
-
-        if not allowed_file(uploaded_image.filename):
-
-            return jsonify({
-
-                "success": False,
-
-                "message": "Unsupported image format."
-
-            }), 400
-
-        filename = secure_filename(
-            uploaded_image.filename
-        )
-
-        image_path = os.path.join(
-
-            app.config["UPLOAD_FOLDER"],
-
-            filename
-
-        )
-
-        uploaded_image.save(image_path)
-
-        prediction = predict_disease(
-            image_path
-        )
-
-        return jsonify({
-
-            "success": True,
-
-            "result": prediction
-
-        })
-
-    except Exception as error:
-
-        return jsonify({
-
-            "success": False,
-
-            "error": str(error)
-
-        }), 500
-    # ==========================================================
-# SERVER INFORMATION
-# ==========================================================
-
-def print_server_information():
-
-    print("\n" + "=" * 60)
-    print("AGRISENSE API SERVER")
-    print("=" * 60)
-
-    print("Host               : 127.0.0.1")
-    print("Port               : 5000")
-    print("Home Endpoint      : http://127.0.0.1:5000/")
-    print("Health Endpoint    : http://127.0.0.1:5000/health")
-    print("Prediction Endpoint: http://127.0.0.1:5000/predict")
-
-    print("=" * 60)
-
-    if MODEL is None:
-
-        print("Prediction Mode    : Demo Mode")
-
-    else:
-
-        print("Prediction Mode    : Trained Model")
-
-    print("Upload Folder      :", UPLOAD_FOLDER)
-    print("Supported Formats  : JPG, JPEG, PNG")
-
-    print("=" * 60)
+print("[SUCCESS] Model Compiled")
 
 
-# ==========================================================
-# APPLICATION ENTRY POINT
-# ==========================================================
+# ======================================================
+# MODEL SUMMARY
+# ======================================================
 
-if __name__ == "__main__":
+print("\nMODEL SUMMARY")
+print("-" * 60)
 
-    print_server_information()
+transfer_learning_model.summary()
 
-    print("\nStarting Flask Server...")
-    print("-" * 60)
 
-    app.run(
+# ======================================================
+# TRAINING CALLBACKS
+# ======================================================
 
-        host="127.0.0.1",
+print("\nCONFIGURING TRAINING")
+print("-" * 60)
 
-        port=5000,
+checkpoint = ModelCheckpoint(
 
-        debug=True
+    filepath=os.path.join(
+        MODEL_DIRECTORY,
+        MODEL_NAME
+    ),
 
-    )
+    monitor="val_accuracy",
+
+    mode="max",
+
+    save_best_only=True,
+
+    verbose=1
+
+)
+
+early_stopping = EarlyStopping(
+
+    monitor="val_loss",
+
+    patience=3,
+
+    restore_best_weights=True,
+
+    verbose=1
+
+)
+
+print("[SUCCESS] Training Callbacks Ready")
+
+
+# ======================================================
+# START TRAINING
+# ======================================================
+
+print("\nSTARTING MODEL TRAINING")
+print("-" * 60)
+
+history = transfer_learning_model.fit(
+
+    train_dataset,
+
+    validation_data=validation_dataset,
+
+    epochs=EPOCHS,
+
+    callbacks=[
+        checkpoint,
+        early_stopping
+    ]
+
+)
+
+print("\n[SUCCESS] Training Completed")
+# ======================================================
+# COMPILE MODEL
+# ======================================================
+
+print("\nCOMPILING MODEL")
+print("-" * 60)
+
+transfer_learning_model.compile(
+
+    optimizer=tf.keras.optimizers.Adam(
+        learning_rate=LEARNING_RATE
+    ),
+
+    loss="categorical_crossentropy",
+
+    metrics=[
+        "accuracy"
+    ]
+
+)
+
+print("[SUCCESS] Model Compiled")
+
+
+# ======================================================
+# MODEL SUMMARY
+# ======================================================
+
+print("\nMODEL SUMMARY")
+print("-" * 60)
+
+transfer_learning_model.summary()
+
+
+# ======================================================
+# TRAINING CALLBACKS
+# ======================================================
+
+print("\nCONFIGURING TRAINING")
+print("-" * 60)
+
+checkpoint = ModelCheckpoint(
+
+    filepath=os.path.join(
+        MODEL_DIRECTORY,
+        MODEL_NAME
+    ),
+
+    monitor="val_accuracy",
+
+    mode="max",
+
+    save_best_only=True,
+
+    verbose=1
+
+)
+
+early_stopping = EarlyStopping(
+
+    monitor="val_loss",
+
+    patience=3,
+
+    restore_best_weights=True,
+
+    verbose=1
+
+)
+
+print("[SUCCESS] Training Callbacks Ready")
+
+
+# ======================================================
+# START TRAINING
+# ======================================================
+
+print("\nSTARTING MODEL TRAINING")
+print("-" * 60)
+
+history = transfer_learning_model.fit(
+
+    train_dataset,
+
+    validation_data=validation_dataset,
+
+    epochs=EPOCHS,
+
+    callbacks=[
+        checkpoint,
+        early_stopping
+    ]
+
+)
+
+print("\n[SUCCESS] Training Completed")
