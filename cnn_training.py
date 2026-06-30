@@ -3,6 +3,7 @@ import tensorflow as tf
 
 # Keras Components
 Sequential = tf.keras.Sequential
+Input = tf.keras.Input
 Conv2D = tf.keras.layers.Conv2D
 MaxPooling2D = tf.keras.layers.MaxPooling2D
 Flatten = tf.keras.layers.Flatten
@@ -32,11 +33,13 @@ else:
 
 # CNN Model
 model = Sequential([
+
+    Input(shape=(224, 224, 3)),
+
     Conv2D(
         32,
         (3, 3),
-        activation="relu",
-        input_shape=(224, 224, 3)
+        activation="relu"
     ),
 
     MaxPooling2D(pool_size=(2, 2)),
@@ -62,6 +65,7 @@ model = Sequential([
         NUM_CLASSES,
         activation="softmax"
     )
+
 ])
 
 print("\nCNN Model Created Successfully\n")

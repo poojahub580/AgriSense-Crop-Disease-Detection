@@ -10,8 +10,7 @@ from flask import (
 
 from werkzeug.utils import secure_filename
 from tensorflow.keras.preprocessing import image
-
-
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 print("=" * 60)
 print("AGRISENSE - API SERVICE MODULE")
 print("=" * 60)
@@ -21,7 +20,7 @@ print("=" * 60)
 # PROJECT CONFIGURATION
 # ==========================================================
 
-MODEL_PATH = "artifacts/crop_disease_model.h5"
+MODEL_PATH = "artifacts/crop_disease_model.keras"
 
 IMAGE_SIZE = (224, 224)
 
