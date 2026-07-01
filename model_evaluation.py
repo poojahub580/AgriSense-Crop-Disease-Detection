@@ -133,6 +133,7 @@ def main():
     display_dataset_balance(
         class_statistics
     )
+    
 
     print("\nEvaluation Completed Successfully")
 
