@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSense Crop Disease Detection</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌱 AgriSense Crop Disease Detection</h1>
+
+    <p>Upload a crop leaf image to identify the disease.</p>
+
+    <form action="/predict" method="POST" enctype="multipart/form-data">
+
+        <input
+            type="file"
+            name="file"
+            accept=".jpg,.jpeg,.png"
+            required>
+
+        <br><br>
+
+        <button type="submit">
+            Predict Disease
+        </button>
+
+    </form>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

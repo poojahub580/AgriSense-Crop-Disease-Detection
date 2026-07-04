@@ -5,7 +5,8 @@ import tensorflow as tf
 from flask import (
     Flask,
     jsonify,
-    request
+    request,
+    render_template
 )
 
 from werkzeug.utils import secure_filename
@@ -26,7 +27,7 @@ MODEL_PATH = "artifacts/crop_disease_model.keras"
 
 IMAGE_SIZE = (224, 224)
 
-UPLOAD_FOLDER = "uploads"
+UPLOAD_FOLDER = "static/images"
 
 ALLOWED_EXTENSIONS = {
     "jpg",
@@ -55,7 +56,6 @@ CLASS_NAMES = [
 
 ]
 
-
 # ==========================================================
 # FLASK INITIALIZATION
 # ==========================================================
@@ -64,30 +64,24 @@ app = Flask(__name__)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-
-if not os.path.exists(UPLOAD_FOLDER):
-
-    os.makedirs(UPLOAD_FOLDER)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 print("[SUCCESS] Upload Directory Ready")
+
+
 # ==========================================================
 # FILE VALIDATION
 # ==========================================================
-# Check whether the uploaded file has a valid image extension
+
 def allowed_file(filename):
 
-    if "." not in filename:
-        return False
-
-    extension = filename.rsplit(".", 1)[1].lower()
-
-    return extension in ALLOWED_EXTENSIONS
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 # ==========================================================
 # MODEL LOADING
 # ==========================================================
-# Load the trained crop disease prediction model
+
 def load_prediction_model():
 
     if not os.path.exists(MODEL_PATH):
@@ -97,9 +91,7 @@ def load_prediction_model():
 
         return None
 
-    model = tf.keras.models.load_model(
-        MODEL_PATH
-    )
+    model = tf.keras.models.load_model(MODEL_PATH)
 
     print("[SUCCESS] Trained Model Loaded Successfully")
 
@@ -107,12 +99,10 @@ def load_prediction_model():
 
 
 MODEL = load_prediction_model()
-
-
 # ==========================================================
 # IMAGE PREPROCESSING
 # ==========================================================
-# Preprocess the uploaded image before making predictions
+
 def preprocess_image(image_path):
 
     img = image.load_img(
@@ -137,12 +127,10 @@ def preprocess_image(image_path):
 # ==========================================================
 # DISEASE PREDICTION
 # ==========================================================
-# Predict the crop disease using the trained model
+
 def predict_disease(image_path):
 
-    processed_image = preprocess_image(
-        image_path
-    )
+    processed_image = preprocess_image(image_path)
 
     if MODEL is None:
 
@@ -157,28 +145,15 @@ def predict_disease(image_path):
         }
 
     prediction = MODEL.predict(
-
         processed_image,
-
         verbose=0
-
     )
 
-    predicted_index = int(
+    predicted_index = int(np.argmax(prediction))
 
-        np.argmax(prediction)
+    confidence = float(np.max(prediction)) * 100
 
-    )
-
-    confidence = float(
-
-        np.max(prediction)
-
-    ) * 100
-
-    disease = CLASS_NAMES[
-        predicted_index
-    ]
+    disease = CLASS_NAMES[predicted_index]
 
     return {
 
@@ -186,12 +161,11 @@ def predict_disease(image_path):
 
         "prediction": disease,
 
-        "confidence": round(
-            confidence,
-            2
-        )
+        "confidence": round(confidence, 2)
 
     }
+
+
 # ==========================================================
 # HOME ROUTE
 # ==========================================================
@@ -199,17 +173,7 @@ def predict_disease(image_path):
 @app.route("/")
 def home():
 
-    return jsonify({
-
-        "project": "AgriSense Crop Disease Detection",
-
-        "status": "API Running",
-
-        "version": "1.0",
-
-        "developer": "AgriSense"
-
-    })
+    return render_template("index.html")
 
 
 # ==========================================================
@@ -224,97 +188,75 @@ def health():
         "server": "Online",
 
         "model_status":
-            "Loaded"
-            if MODEL is not None
-            else
-            "Demo Mode",
+            "Loaded" if MODEL is not None else "Demo Mode",
 
         "dataset_classes": len(CLASS_NAMES),
 
         "image_size": IMAGE_SIZE
 
     })
-
-
 # ==========================================================
 # DISEASE PREDICTION API
 # ==========================================================
 
-@app.route(
-    "/predict",
-    methods=["POST"]
-)
+@app.route("/predict", methods=["POST"])
 def prediction_api():
 
     try:
 
-        if "image" not in request.files:
+        if "file" not in request.files:
 
-            return jsonify({
+            return render_template(
+                "result.html",
+                prediction="No image uploaded.",
+                confidence="0%"
+            )
 
-                "success": False,
-
-                "message": "Image file not found."
-
-            }), 400
-
-        uploaded_image = request.files["image"]
+        uploaded_image = request.files["file"]
 
         if uploaded_image.filename == "":
 
-            return jsonify({
-
-                "success": False,
-
-                "message": "No image selected."
-
-            }), 400
+            return render_template(
+                "result.html",
+                prediction="No image selected.",
+                confidence="0%"
+            )
 
         if not allowed_file(uploaded_image.filename):
 
-            return jsonify({
+            return render_template(
+                "result.html",
+                prediction="Unsupported image format.",
+                confidence="0%"
+            )
 
-                "success": False,
-
-                "message": "Unsupported image format."
-
-            }), 400
-
-        filename = secure_filename(
-            uploaded_image.filename
-        )
+        filename = secure_filename(uploaded_image.filename)
 
         image_path = os.path.join(
-
             app.config["UPLOAD_FOLDER"],
-
             filename
-
         )
 
         uploaded_image.save(image_path)
 
-        prediction = predict_disease(
-            image_path
+        prediction = predict_disease(image_path)
+
+        return render_template(
+            "result.html",
+            prediction=prediction["prediction"],
+            confidence=f'{prediction["confidence"]}%',
+            status=prediction["status"],
+            image_file=filename
         )
-
-        return jsonify({
-
-            "success": True,
-
-            "result": prediction
-
-        })
 
     except Exception as error:
 
-        return jsonify({
-
-            "success": False,
-
-            "error": str(error)
-
-        }), 500
+        return render_template(
+            "result.html",
+            prediction="Error",
+            confidence="0%",
+            status=str(error)
+        )
     # ==========================================================
 # SERVER INFORMATION
 # ==========================================================
@@ -334,11 +276,8 @@ def print_server_information():
     print("=" * 60)
 
     if MODEL is None:
-
         print("Prediction Mode    : Demo Mode")
-
     else:
-
         print("Prediction Mode    : Trained Model")
 
     print("Upload Folder      :", UPLOAD_FOLDER)
@@ -359,11 +298,7 @@ if __name__ == "__main__":
     print("-" * 60)
 
     app.run(
-
         host="127.0.0.1",
-
         port=5000,
-
         debug=True
-
     )
