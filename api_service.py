@@ -1,4 +1,6 @@
 import os
+from datetime import datetime
+
 import numpy as np
 import tensorflow as tf
 
@@ -10,13 +12,16 @@ from flask import (
 )
 
 from werkzeug.utils import secure_filename
+
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
+from data.disease_info import DISEASE_INFO
 
-print("=" * 60)
-print("AGRISENSE - API SERVICE MODULE")
-print("=" * 60)
+
+print("=" * 70)
+print("🌱 AGRISENSE AI - CROP DISEASE DETECTION")
+print("=" * 70)
 
 
 # ==========================================================
@@ -25,9 +30,9 @@ print("=" * 60)
 
 MODEL_PATH = "artifacts/crop_disease_model.keras"
 
-IMAGE_SIZE = (224, 224)
-
 UPLOAD_FOLDER = "static/images"
+
+IMAGE_SIZE = (224, 224)
 
 ALLOWED_EXTENSIONS = {
     "jpg",
@@ -35,14 +40,15 @@ ALLOWED_EXTENSIONS = {
     "png"
 }
 
-
 CLASS_NAMES = [
 
     "Pepper__bell___Bacterial_spot",
     "Pepper__bell___healthy",
+
     "Potato___Early_blight",
     "Potato___Late_blight",
     "Potato___healthy",
+
     "Tomato_Bacterial_spot",
     "Tomato_Early_blight",
     "Tomato_Late_blight",
@@ -56,17 +62,21 @@ CLASS_NAMES = [
 
 ]
 
+
 # ==========================================================
-# FLASK INITIALIZATION
+# FLASK APP INITIALIZATION
 # ==========================================================
 
 app = Flask(__name__)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
 
-print("[SUCCESS] Upload Directory Ready")
+print("✅ Upload directory ready")
 
 
 # ==========================================================
@@ -75,97 +85,147 @@ print("[SUCCESS] Upload Directory Ready")
 
 def allowed_file(filename):
 
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    return (
+        "." in filename and
+        filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
 
 
 # ==========================================================
-# MODEL LOADING
+# LOAD MODEL
 # ==========================================================
 
 def load_prediction_model():
 
     if not os.path.exists(MODEL_PATH):
 
-        print("[WARNING] Trained model not found.")
-        print("[INFO] API will run in Demo Mode.")
+        print("⚠ Model not found")
+        print("Running in Demo Mode")
 
         return None
 
     model = tf.keras.models.load_model(MODEL_PATH)
 
-    print("[SUCCESS] Trained Model Loaded Successfully")
+    print("✅ Model Loaded Successfully")
 
     return model
 
 
 MODEL = load_prediction_model()
+import os
+from datetime import datetime
+
+import numpy as np
+import tensorflow as tf
+
+from flask import (
+    Flask,
+    jsonify,
+    request,
+    render_template
+)
+
+from werkzeug.utils import secure_filename
+
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+
+from data.disease_info import DISEASE_INFO
+
+
+print("=" * 70)
+print("🌱 AGRISENSE AI - CROP DISEASE DETECTION")
+print("=" * 70)
+
+
 # ==========================================================
-# IMAGE PREPROCESSING
+# PROJECT CONFIGURATION
 # ==========================================================
 
-def preprocess_image(image_path):
+MODEL_PATH = "artifacts/crop_disease_model.keras"
 
-    img = image.load_img(
-        image_path,
-        target_size=IMAGE_SIZE
+UPLOAD_FOLDER = "static/images"
+
+IMAGE_SIZE = (224, 224)
+
+ALLOWED_EXTENSIONS = {
+    "jpg",
+    "jpeg",
+    "png"
+}
+
+CLASS_NAMES = [
+
+    "Pepper__bell___Bacterial_spot",
+    "Pepper__bell___healthy",
+
+    "Potato___Early_blight",
+    "Potato___Late_blight",
+    "Potato___healthy",
+
+    "Tomato_Bacterial_spot",
+    "Tomato_Early_blight",
+    "Tomato_Late_blight",
+    "Tomato_Leaf_Mold",
+    "Tomato_Septoria_leaf_spot",
+    "Tomato_Spider_mites_Two_spotted_spider_mite",
+    "Tomato__Target_Spot",
+    "Tomato__Tomato_YellowLeaf__Curl_Virus",
+    "Tomato__Tomato_mosaic_virus",
+    "Tomato_healthy"
+
+]
+
+
+# ==========================================================
+# FLASK APP INITIALIZATION
+# ==========================================================
+
+app = Flask(__name__)
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
+
+print("✅ Upload directory ready")
+
+
+# ==========================================================
+# FILE VALIDATION
+# ==========================================================
+
+def allowed_file(filename):
+
+    return (
+        "." in filename and
+        filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
 
-    img_array = image.img_to_array(img)
-
-    img_array = img_array.astype("float32")
-
-    img_array = preprocess_input(img_array)
-
-    img_array = np.expand_dims(
-        img_array,
-        axis=0
-    )
-
-    return img_array
-
 
 # ==========================================================
-# DISEASE PREDICTION
+# LOAD MODEL
 # ==========================================================
 
-def predict_disease(image_path):
+def load_prediction_model():
 
-    processed_image = preprocess_image(image_path)
+    if not os.path.exists(MODEL_PATH):
 
-    if MODEL is None:
+        print("⚠ Model not found")
+        print("Running in Demo Mode")
 
-        return {
+        return None
 
-            "status": "Demo Mode",
+    model = tf.keras.models.load_model(MODEL_PATH)
 
-            "prediction": "Tomato_healthy",
+    print("✅ Model Loaded Successfully")
 
-            "confidence": "N/A"
-
-        }
-
-    prediction = MODEL.predict(
-        processed_image,
-        verbose=0
-    )
-
-    predicted_index = int(np.argmax(prediction))
-
-    confidence = float(np.max(prediction)) * 100
-
-    disease = CLASS_NAMES[predicted_index]
-
-    return {
-
-        "status": "Prediction Completed",
-
-        "prediction": disease,
-
-        "confidence": round(confidence, 2)
-
-    }
+    return model
 
 
+MODEL = load_prediction_model()
 # ==========================================================
 # HOME ROUTE
 # ==========================================================
@@ -195,8 +255,10 @@ def health():
         "image_size": IMAGE_SIZE
 
     })
+
+
 # ==========================================================
-# DISEASE PREDICTION API
+# DISEASE PREDICTION ROUTE
 # ==========================================================
 
 @app.route("/predict", methods=["POST"])
@@ -207,9 +269,15 @@ def prediction_api():
         if "file" not in request.files:
 
             return render_template(
+
                 "result.html",
+
                 prediction="No image uploaded.",
-                confidence="0%"
+
+                confidence="0%",
+
+                status="Upload Failed"
+
             )
 
         uploaded_image = request.files["file"]
@@ -217,45 +285,85 @@ def prediction_api():
         if uploaded_image.filename == "":
 
             return render_template(
+
                 "result.html",
+
                 prediction="No image selected.",
-                confidence="0%"
+
+                confidence="0%",
+
+                status="Upload Failed"
+
             )
 
         if not allowed_file(uploaded_image.filename):
 
             return render_template(
+
                 "result.html",
+
                 prediction="Unsupported image format.",
-                confidence="0%"
+
+                confidence="0%",
+
+                status="Upload Failed"
+
             )
 
         filename = secure_filename(uploaded_image.filename)
 
         image_path = os.path.join(
+
             app.config["UPLOAD_FOLDER"],
+
             filename
+
         )
 
         uploaded_image.save(image_path)
 
-        prediction = predict_disease(image_path)
+        result = predict_disease(image_path)
 
         return render_template(
+
             "result.html",
-            prediction=prediction["prediction"],
-            confidence=f'{prediction["confidence"]}%',
-            status=prediction["status"],
-            image_file=filename
+
+            image_file=filename,
+
+            crop=result["crop"],
+
+            prediction=result["prediction"],
+
+            confidence=f'{result["confidence"]}%',
+
+            severity=result["severity"],
+
+            description=result["description"],
+
+            symptoms=result["symptoms"],
+
+            recommendation=result["recommendation"],
+
+            prevention=result["prevention"],
+
+            prediction_time=result["prediction_time"],
+
+            status=result["status"]
+
         )
 
     except Exception as error:
 
         return render_template(
+
             "result.html",
-            prediction="Error",
+
+            prediction="Prediction Failed",
+
             confidence="0%",
+
             status=str(error)
+
         )
     # ==========================================================
 # SERVER INFORMATION
@@ -263,27 +371,33 @@ def prediction_api():
 
 def print_server_information():
 
-    print("\n" + "=" * 60)
-    print("AGRISENSE API SERVER")
-    print("=" * 60)
+    print("\n" + "=" * 70)
 
-    print("Host               : 127.0.0.1")
-    print("Port               : 5000")
-    print("Home Endpoint      : http://127.0.0.1:5000/")
-    print("Health Endpoint    : http://127.0.0.1:5000/health")
-    print("Prediction Endpoint: http://127.0.0.1:5000/predict")
+    print("🌱 AGRISENSE AI SERVER")
 
-    print("=" * 60)
+    print("=" * 70)
 
-    if MODEL is None:
-        print("Prediction Mode    : Demo Mode")
-    else:
-        print("Prediction Mode    : Trained Model")
+    print(f"{'Host':25}: 127.0.0.1")
 
-    print("Upload Folder      :", UPLOAD_FOLDER)
-    print("Supported Formats  : JPG, JPEG, PNG")
+    print(f"{'Port':25}: 5000")
 
-    print("=" * 60)
+    print(f"{'Home Page':25}: http://127.0.0.1:5000/")
+
+    print(f"{'Prediction Endpoint':25}: /predict")
+
+    print(f"{'Health Endpoint':25}: /health")
+
+    print(f"{'Upload Folder':25}: {UPLOAD_FOLDER}")
+
+    print(f"{'Image Size':25}: {IMAGE_SIZE[0]} x {IMAGE_SIZE[1]}")
+
+    print(f"{'Supported Formats':25}: JPG, JPEG, PNG")
+
+    print(f"{'Total Classes':25}: {len(CLASS_NAMES)}")
+
+    print(f"{'Prediction Mode':25}: {'Loaded' if MODEL else 'Demo Mode'}")
+
+    print("=" * 70)
 
 
 # ==========================================================
@@ -294,11 +408,15 @@ if __name__ == "__main__":
 
     print_server_information()
 
-    print("\nStarting Flask Server...")
-    print("-" * 60)
+    print("\n🚀 Starting AgriSense AI Server...")
+    print("-" * 70)
 
     app.run(
+
         host="127.0.0.1",
+
         port=5000,
-        debug=True
+
+        debug=True----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     )

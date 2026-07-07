@@ -2,52 +2,142 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSense - Prediction Result</title>
 
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Prediction Result</title>
-
-<link rel="stylesheet"
-href="{{ url_for('static', filename='css/style.css') }}">
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>🌱 Prediction Result</h1>
+    <div class="result-card">
 
-{% if image_file %}
+        <h1>🌱 AgriSense AI</h1>
 
-<img src="{{ url_for('static', filename='images/' + image_file) }}"
-width="300">
+        <h2>Prediction Result</h2>
 
-<br><br>
+        {% if image_file %}
 
-{% endif %}
+        <img
+            src="{{ url_for('static', filename='images/' + image_file) }}"
+            alt="Uploaded Image"
+            class="prediction-image">
 
-<h2>{{ prediction }}</h2>
+        {% endif %}
 
-<h3>Confidence : {{ confidence }}</h3>
+        <div class="section">
+            <h3>Crop</h3>
+            <p>{{ crop }}</p>
+        </div>
 
-<p>{{ status }}</p>
+        <div class="section">
+            <h3>Disease</h3>
+            <p>{{ prediction }}</p>
+        </div>
 
-<br>
+        <div class="section">
+            <h3>Confidence</h3>
+            <p>{{ confidence }}</p>
+        </div>
 
-<a href="/">
+        <div class="section">
+            <h3>Severity</h3>
+            <p>{{ severity }}</p>
+        </div>
 
-<button>
+        <div class="section">
+            <h3>Description</h3>
+            <p>{{ description }}</p>
+        </div>
 
-Predict Another Image
+        <div class="section">
+            <h3>Symptoms</h3>
 
-</button>
+            <ul>
 
-</a>
+            {% if symptoms %}
+
+                {% for item in symptoms %}
+
+                <li>{{ item }}</li>
+
+                {% endfor %}
+
+            {% endif %}
+
+            </ul>
+
+        </div>
+
+        <div class="section">
+            <h3>Recommendation</h3>
+
+            <ul>
+
+            {% if recommendation %}
+
+                {% for item in recommendation %}
+
+                <li>{{ item }}</li>
+
+                {% endfor %}
+
+            {% endif %}
+
+            </ul>
+
+        </div>
+
+        <div class="section">
+            <h3>Prevention</h3>
+
+            <ul>
+
+            {% if prevention %}
+
+                {% for item in prevention %}
+
+                <li>{{ item }}</li>
+
+                {% endfor %}
+
+            {% endif %}
+
+            </ul>
+
+        </div>
+
+        <div class="section">
+            <h3>Status</h3>
+            <p>{{ status }}</p>
+        </div>
+
+        <div class="section">
+            <h3>Prediction Time</h3>
+            <p>{{ prediction_time }}</p>
+        </div>
+
+        <br>
+
+        <a href="{{ url_for('home') }}">
+
+            <button>
+
+                Predict Another Image
+
+            </button>
+
+        </a>
+
+    </div>
 
 </div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
 
