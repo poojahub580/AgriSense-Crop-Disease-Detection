@@ -9,7 +9,7 @@ body{
 
     min-height:100vh;
 
-    background:linear-gradient(135deg,#0f9b0f,#38ef7d);
+    background:linear-gradient(135deg,#0b3d2e,#14532d,#1f7a4c);
 
     display:flex;
 
@@ -25,25 +25,27 @@ body{
 
     width:100%;
 
-    max-width:900px;
+    max-width:950px;
 
 }
 
 .result-card{
 
-    background:rgba(255,255,255,.18);
+    background:rgba(255,255,255,.10);
 
     backdrop-filter:blur(18px);
 
-    border-radius:25px;
+    border:1px solid rgba(255,255,255,.15);
+
+    border-radius:24px;
 
     padding:40px;
 
-    box-shadow:0 15px 40px rgba(0,0,0,.25);
+    box-shadow:0 20px 45px rgba(0,0,0,.35);
 
-    color:#fff;
+    color:#ffffff;
 
-    animation:fadeIn .8s ease;
+    animation:fadeIn .7s ease;
 
 }
 
@@ -51,9 +53,9 @@ body{
 
     text-align:center;
 
-    font-size:40px;
+    font-size:38px;
 
-    margin-bottom:10px;
+    margin-bottom:8px;
 
 }
 
@@ -61,9 +63,11 @@ body{
 
     text-align:center;
 
+    font-weight:400;
+
     margin-bottom:30px;
 
-    font-weight:400;
+    color:#d9f99d;
 
 }
 
@@ -73,45 +77,49 @@ body{
 
     width:320px;
 
-    margin:0 auto;
+    margin:0 auto 30px;
 
     border-radius:18px;
 
-    border:5px solid white;
-
-    box-shadow:0 10px 25px rgba(0,0,0,.25);
+    border:4px solid rgba(255,255,255,.4);
 
     transition:.4s;
+
+    box-shadow:0 12px 25px rgba(0,0,0,.35);
 
 }
 
 .prediction-image:hover{
 
-    transform:scale(1.05);
+    transform:scale(1.03);
 
 }
 
 .section{
 
-    background:rgba(255,255,255,.12);
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.10);
 
     border-radius:15px;
 
     padding:20px;
 
-    margin-top:20px;
+    margin-bottom:20px;
 
 }
 
 .section h3{
 
-    margin-bottom:12px;
+    margin-bottom:10px;
+
+    color:#bbf7d0;
 
 }
 
 .section p{
 
-    line-height:1.8;
+    line-height:1.7;
 
 }
 
@@ -123,7 +131,7 @@ body{
 
 .section li{
 
-    margin-bottom:10px;
+    margin-bottom:8px;
 
 }
 
@@ -131,9 +139,9 @@ body{
 
     width:100%;
 
-    height:26px;
+    height:22px;
 
-    background:#ddd;
+    background:#d1d5db;
 
     border-radius:30px;
 
@@ -145,33 +153,17 @@ body{
 
     height:100%;
 
-    background:linear-gradient(90deg,#00c853,#64dd17);
+    background:linear-gradient(90deg,#22c55e,#15803d);
+
+    color:white;
+
+    font-weight:600;
 
     text-align:center;
 
-    color:white;
+    line-height:22px;
 
-    font-weight:bold;
-
-    line-height:26px;
-
-    transition:width 1.5s ease;
-
-}
-
-.badge{
-
-    display:inline-block;
-
-    background:#ff9800;
-
-    color:white;
-
-    padding:8px 18px;
-
-    border-radius:30px;
-
-    font-weight:bold;
+    transition:width 1.2s ease;
 
 }
 
@@ -179,23 +171,23 @@ button{
 
     width:100%;
 
-    margin-top:35px;
+    margin-top:25px;
 
     padding:16px;
 
     border:none;
 
-    border-radius:40px;
+    border-radius:35px;
 
-    font-size:18px;
+    background:#16a34a;
+
+    color:white;
+
+    font-size:17px;
 
     font-weight:600;
 
     cursor:pointer;
-
-    background:white;
-
-    color:#0f9b0f;
 
     transition:.3s;
 
@@ -203,9 +195,11 @@ button{
 
 button:hover{
 
-    transform:translateY(-4px);
+    background:#15803d;
 
-    box-shadow:0 10px 20px rgba(0,0,0,.25);
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 20px rgba(0,0,0,.3);
 
 }
 
@@ -215,7 +209,7 @@ button:hover{
 
         opacity:0;
 
-        transform:translateY(40px);
+        transform:translateY(30px);
 
     }
 
@@ -245,7 +239,7 @@ width:100%;
 
 .result-card h1{
 
-font-size:30px;
+font-size:28px;
 
 }
 
