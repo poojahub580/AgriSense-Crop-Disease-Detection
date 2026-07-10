@@ -633,3 +633,20 @@ h1{
     color:#d1d5db;
 
 }
+/* =========================================
+   Drag & Drop Active State
+========================================= */
+
+.upload-card.drag-over{
+
+    border-color:#bbf7d0;
+
+    background:rgba(187,247,208,.20);
+
+    transform:scale(1.02);
+
+    box-shadow:0 15px 30px rgba(0,0,0,.30);
+
+    transition:.3s;
+
+}

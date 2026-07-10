@@ -69,8 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const previewImage = document.getElementById("previewImage");
     const fileName = document.getElementById("fileName");
     const removeButton = document.getElementById("removeImage");
+    const dropArea = document.getElementById("dropArea");
 
-    if (fileInput && previewImage && fileName && removeButton) {
+    if (fileInput && previewImage && fileName && removeButton&& dropArea) {
 
         fileInput.addEventListener("change", function () {
 
@@ -110,6 +111,47 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     }
+    // ===============================
+        // Drag & Drop
+        // ===============================
+
+        ["dragenter", "dragover"].forEach(eventName => {
+
+            dropArea.addEventListener(eventName, function (e) {
+
+                e.preventDefault();
+
+                dropArea.classList.add("drag-over");
+
+            });
+
+        });
+
+        ["dragleave", "drop"].forEach(eventName => {
+
+            dropArea.addEventListener(eventName, function (e) {
+
+                e.preventDefault();
+
+                dropArea.classList.remove("drag-over");
+
+            });
+
+        });
+
+        dropArea.addEventListener("drop", function (e) {
+
+            const files = e.dataTransfer.files;
+
+            if (files.length > 0) {
+
+                fileInput.files = files;
+
+                fileInput.dispatchEvent(new Event("change"));
+
+            }
+
+        });
 
     // ===============================
     // Loading Animation
