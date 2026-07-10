@@ -19,21 +19,61 @@
 
 <div class="container">
 
-    <h1>🌱 AgriSense Crop Disease Detection</h1>
+    <h1>🌱 AgriSense AI</h1>
 
-    <p>Upload a crop leaf image to identify the disease.</p>
+<h2 class="subtitle">
+
+    AI Powered Crop Disease Detection
+
+</h2>
+
+<p class="description">
+
+    Upload a crop leaf image and instantly identify crop diseases
+    using Deep Learning powered by MobileNetV2.
+
+</p>
 
     <form id="predictionForm"
           action="/predict"
           method="POST"
           enctype="multipart/form-data">
 
-        <input
-            type="file"
-            id="fileInput"
-            name="file"
-            accept=".jpg,.jpeg,.png"
-            required>
+        <label for="fileInput" class="upload-card">
+
+    <div class="upload-icon">
+
+        📷
+
+    </div>
+
+    <h3>
+
+        Upload Crop Leaf Image
+
+    </h3>
+
+    <p>
+
+        Click to browse your image
+
+    </p>
+
+    <small>
+
+        Supports JPG • JPEG • PNG
+
+    </small>
+
+</label>
+
+<input
+    type="file"
+    id="fileInput"
+    name="file"
+    accept=".jpg,.jpeg,.png"
+    hidden
+    required>
 
         <p id="fileName"
            style="margin-top:15px;color:white;font-weight:600;">
@@ -95,6 +135,77 @@
         </div>
 
     </form>
+    <!-- AI Feature Cards -->
+
+<div class="features">
+
+    <div class="feature-card">
+
+        <div class="feature-icon">🤖</div>
+
+        <h3>AI Powered</h3>
+
+        <p>Deep Learning using MobileNetV2 for accurate crop disease detection.</p>
+
+    </div>
+
+    <div class="feature-card">
+
+        <div class="feature-icon">⚡</div>
+
+        <h3>Fast Prediction</h3>
+
+        <p>Get disease prediction results within seconds.</p>
+
+    </div>
+
+    <div class="feature-card">
+
+        <div class="feature-icon">🌿</div>
+
+        <h3>15 Disease Classes</h3>
+
+        <p>Supports Tomato, Potato and Bell Pepper disease detection.</p>
+
+    </div>
+
+</div>
+<div class="tips-section">
+
+    <h2>📸 Best Image Capture Tips</h2>
+
+    <div class="tips-grid">
+
+        <div class="tip-card">
+            💡 Use good natural lighting
+        </div>
+
+        <div class="tip-card">
+            🍃 Capture the complete leaf
+        </div>
+
+        <div class="tip-card">
+            📷 Avoid blurry images
+        </div>
+
+        <div class="tip-card">
+            🌿 Keep a plain background
+        </div>
+
+    </div>
+
+</div>
+<footer class="footer">
+
+    <h3>🌱 AgriSense AI</h3>
+
+    <p>AI Powered Crop Disease Detection</p>
+
+    <p>Built with TensorFlow • Flask • MobileNetV2</p>
+
+    <small>© 2026 AgriSense AI | Final Year Project</small>
+
+</footer>
 
 </div>
 
