@@ -70,12 +70,44 @@ document.addEventListener("DOMContentLoaded", () => {
     const fileName = document.getElementById("fileName");
     const removeButton = document.getElementById("removeImage");
     const dropArea = document.getElementById("dropArea");
+    const fileError = document.getElementById("fileError");
 
-    if (fileInput && previewImage && fileName && removeButton&& dropArea) {
+    if (fileInput && previewImage && fileName && removeButton&& dropArea && fileError) {
 
         fileInput.addEventListener("change", function () {
 
             const file = this.files[0];
+            fileError.style.display = "none";
+fileError.textContent = "";
+
+const allowedTypes = [
+    "image/jpeg",
+    "image/png"
+];
+
+const maxSize = 5 * 1024 * 1024;
+
+if (file) {
+
+    if (!allowedTypes.includes(file.type)) {
+
+        fileError.textContent = "❌ Only JPG and PNG images are allowed.";
+        fileError.style.display = "block";
+        fileInput.value = "";
+        return;
+
+    }
+
+    if (file.size > maxSize) {
+
+        fileError.textContent = "❌ File size must be less than 5 MB.";
+        fileError.style.display = "block";
+        fileInput.value = "";
+        return;
+
+    }
+
+}
 
             if (file) {
 
