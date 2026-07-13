@@ -25,6 +25,48 @@
 
 <h2>Prediction Result</h2>
 
+<div class="summary-card">
+
+    <h3>📋 Prediction Summary</h3>
+
+    <div class="summary-grid">
+
+        <div class="summary-item">
+
+            <span class="summary-label">🌾 Crop</span>
+
+            <span class="summary-value">{{ crop }}</span>
+
+        </div>
+
+        <div class="summary-item">
+
+            <span class="summary-label">🦠 Disease</span>
+
+            <span class="summary-value">{{ prediction }}</span>
+
+        </div>
+
+        <div class="summary-item">
+
+            <span class="summary-label">📊 Confidence</span>
+
+            <span class="summary-value">{{ confidence }}</span>
+
+        </div>
+
+        <div class="summary-item">
+
+            <span class="summary-label">⚠ Severity</span>
+
+            <span class="summary-value">{{ severity }}</span>
+
+        </div>
+
+    </div>
+
+</div>
+
 {% if image_file %}
 
 <img
@@ -197,6 +239,14 @@ data-width="{{ confidence }}">
 
 </div>
 
+<div class="prediction-note">
+
+    <p>
+        ℹ️ <strong>Note:</strong> This prediction is AI-assisted and should be verified by an agricultural expert before taking corrective action.
+    </p>
+
+</div>
+
 <div style="margin-top:30px;">
 
 <a href="{{ url_for('home') }}">
@@ -220,3 +270,4 @@ data-width="{{ confidence }}">
 </body>
 
 </html>
+

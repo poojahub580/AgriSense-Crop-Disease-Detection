@@ -393,6 +393,7 @@ def prediction_api():
         # --------------------------------------
         # Send data to result page
         # --------------------------------------
+        display_prediction = result["prediction"].replace("__", " - ").replace("_", " ")
 
         return render_template(
 
@@ -402,7 +403,7 @@ def prediction_api():
 
             crop=result["crop"],
 
-            prediction=result["prediction"],
+            prediction=display_prediction,
 
             confidence=f'{result["confidence"]}%',
 
