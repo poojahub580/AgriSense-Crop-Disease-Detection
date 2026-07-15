@@ -247,13 +247,23 @@ data-width="{{ confidence }}">
 
 </div>
 
-<div style="margin-top:30px;">
+<div class="action-buttons">
 
 <a href="{{ url_for('home') }}">
 
-<button type="button">
+<button type="button" class="predict-again-btn">
 
-🔄 Predict Another Image
+🌱 Predict Another Leaf
+
+</button>
+
+</a>
+
+<a href="{{ url_for('home') }}">
+
+<button type="button" class="secondary-btn">
+
+🏠 Back to Home
 
 </button>
 
@@ -270,4 +280,3 @@ data-width="{{ confidence }}">
 </body>
 
 </html>
-
