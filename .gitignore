@@ -182,3 +182,9 @@ cython_debug/
 datasets/PlantVillage/
 uploads/*
 !uploads/.gitkeep
+# VS Code
+.vscode/
+
+# macOS and Windows
+.DS_Store
+Thumbs.db
