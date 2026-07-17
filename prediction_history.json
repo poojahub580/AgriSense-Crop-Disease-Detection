@@ -2,6 +2,12 @@
     {
         "crop": "Potato",
         "prediction": "Potato -  Early blight",
+        "confidence": "99.99%",
+        "time": "17 July 2026 10:15 PM"
+    },
+    {
+        "crop": "Potato",
+        "prediction": "Potato -  Early blight",
         "confidence": "98.69%",
         "time": "17 July 2026 09:05 PM"
     },
@@ -22,11 +28,5 @@
         "prediction": "Tomato Septoria leaf spot",
         "confidence": "42.12%",
         "time": "17 July 2026 02:39 PM"
-    },
-    {
-        "crop": "Tomato",
-        "prediction": "Tomato - Tomato mosaic virus",
-        "confidence": "72.5%",
-        "time": "17 July 2026 02:37 PM"
     }
 ]
