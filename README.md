@@ -211,7 +211,7 @@ Example Response
 Clone Repository
 
 ```bash
-git clone https://github.com/Aditya-1809/AgriSense-Crop-Disease-Detection.git
+git clone https://github.com/poojahub580/AgriSense-Crop-Disease-Detection
 ```
 
 Move into project folder
