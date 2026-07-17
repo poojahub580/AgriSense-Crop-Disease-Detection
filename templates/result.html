@@ -19,6 +19,12 @@
 
 <div class="container">
 
+<div class="theme-header">
+    <button id="theme-toggle" class="theme-toggle">
+        🌙 Dark Mode
+    </button>
+</div>
+
 <div class="result-card">
 
 <h1>🌱 AgriSense AI</h1>
@@ -273,18 +279,30 @@ data-width="{{ confidence }}">
 </div>
 
 <div class="section">
-    <h3>🕒 Prediction History</h3>
+    <h3>🕒 Recent Predictions</h3>
 
     {% if history %}
     <ul class="history-list">
         {% for item in history %}
-        <li>
-            <strong>{{ item.crop }}</strong> -
-            {{ item.prediction }}
-            ({{ item.confidence }})
-            <br>
-            <span class="history-date">{{ item.time }}</span>
-        </li>
+       <li>
+    <strong>{{ loop.index }}. {{ item.crop }}</strong> -
+    {{ item.prediction
+    .replace(item.crop + " - ", "")
+    .replace("Tomato ", "")
+    .replace("Potato ", "")
+    .replace("Pepper - bell ", "")
+}}
+
+    <br>
+
+    <strong>Confidence:</strong> {{ item.confidence }}
+
+    <br>
+
+    <span class="history-date">
+        📅 {{ item.time }}
+    </span>
+</li>
         {% endfor %}
     </ul>
     {% else %}
@@ -331,6 +349,28 @@ data-width="{{ confidence }}">
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
-</body>
+<script>
+const themeToggle = document.getElementById("theme-toggle");
 
+// Load saved theme
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark-mode");
+    themeToggle.textContent = "☀️ Light Mode";
+}
+
+// Toggle theme
+themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+
+    if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+        themeToggle.textContent = "☀️ Light Mode";
+    } else {
+        localStorage.setItem("theme", "light");
+        themeToggle.textContent = "🌙 Dark Mode";
+    }
+});
+</script>
+
+</body>
 </html>
