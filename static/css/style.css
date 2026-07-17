@@ -177,7 +177,7 @@ body{
 
 }
 
-button{
+button:not(.theme-toggle){
 
     width:100%;
 
@@ -205,7 +205,7 @@ button{
 
 }
 
-button:hover{
+button:not(.theme-toggle):hover{
 
     transform:translateY(-4px) scale(1.02);
 
@@ -811,4 +811,189 @@ grid-template-columns:1fr;
 
     background:#1f2937;
 
+}
+.confidence-high{
+    display:inline-block;
+    margin-top:15px;
+    padding:8px 16px;
+    background:#d1fae5;
+    color:#065f46;
+    border-radius:25px;
+    font-weight:bold;
+}
+
+.confidence-medium{
+    display:inline-block;
+    margin-top:15px;
+    padding:8px 16px;
+    background:#fef3c7;
+    color:#92400e;
+    border-radius:25px;
+    font-weight:bold;
+}
+
+.confidence-low{
+    display:inline-block;
+    margin-top:15px;
+    padding:8px 16px;
+    background:#fee2e2;
+    color:#991b1b;
+    border-radius:25px;
+    font-weight:bold;
+}
+/* ==========================
+   Prediction History
+========================== */
+
+.history-list{
+    list-style:none;
+    padding:0;
+    margin-top:15px;
+}
+
+.history-list li{
+    background:rgba(255,255,255,0.20);
+    margin-bottom:12px;
+    padding:15px;
+    border-radius:12px;
+    color:#000;
+    font-weight:600;
+    border-left:5px solid #2e7d32;
+}
+
+.history-list strong{
+    color:#000;
+    font-size:16px;
+}
+
+.history-date{
+    display:block;
+    margin-top:6px;
+    color:#000;
+    font-size:13px;
+    opacity:0.8;
+}
+/* =====================================
+   DARK MODE TOGGLE BUTTON
+===================================== */
+
+.theme-header{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:10px;
+    margin-bottom:20px;
+}
+
+.theme-toggle{
+    width:auto !important;
+    margin:0 !important;
+    margin-left:auto !important;
+
+    padding:10px 18px !important;
+
+    background:#1f2937;
+    color:#ffffff;
+
+    border:none;
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:15px;
+    font-weight:600;
+
+    box-shadow:0 6px 15px rgba(0,0,0,.25);
+
+    transition:
+        background-color .3s ease,
+        color .3s ease,
+        transform .25s ease,
+        box-shadow .3s ease;
+}
+
+.theme-toggle:hover{
+    background:#374151;
+    transform:translateY(-2px) scale(1.03);
+    box-shadow:0 10px 20px rgba(0,0,0,.35);
+}
+
+/* =====================================
+   SMOOTH TRANSITIONS
+===================================== */
+
+body,
+.container,
+.result-card,
+.upload-card,
+.feature-card,
+.tip-card,
+.summary-card,
+.section,
+.footer,
+input,
+textarea,
+select,
+.progress,
+.history-list li{
+    transition:
+        background-color .35s ease,
+        color .35s ease,
+        border-color .35s ease,
+        box-shadow .35s ease;
+}
+
+/* =====================================
+   DARK MODE
+===================================== */
+
+body.dark-mode{
+    background:#0f172a;
+    color:#f8fafc;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode p,
+body.dark-mode label,
+body.dark-mode small{
+    color:#f8fafc;
+}
+
+body.dark-mode .result-card,
+body.dark-mode .upload-card,
+body.dark-mode .feature-card,
+body.dark-mode .tip-card,
+body.dark-mode .summary-card,
+body.dark-mode .section{
+    background:#1e293b;
+    border:1px solid #334155;
+    color:#f8fafc;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select{
+    background:#334155;
+    color:#ffffff;
+    border:1px solid #475569;
+}
+
+body.dark-mode .progress{
+    background:#334155;
+}
+
+body.dark-mode .history-list li{
+    background:#334155;
+    color:#ffffff;
+    border-left:5px solid #22c55e;
+}
+
+body.dark-mode .history-list strong,
+body.dark-mode .history-date{
+    color:#ffffff;
+}
+
+body.dark-mode .footer{
+    color:#cbd5e1;
 }

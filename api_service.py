@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime
 
@@ -395,6 +396,30 @@ def prediction_api():
         # --------------------------------------
         display_prediction = result["prediction"].replace("__", " - ").replace("_", " ")
 
+        # Load existing prediction history
+        history_file = "prediction_history.json"
+
+        if os.path.exists(history_file):
+           with open(history_file, "r") as file:
+             history = json.load(file)
+        else:
+         history = []
+
+        # Add current prediction
+        history.insert(0, {
+        "crop": result["crop"],
+        "prediction": display_prediction,
+        "confidence": f'{result["confidence"]}%',
+        "time": result["prediction_time"]
+        })
+
+        # Keep only the latest 5 predictions
+        history = history[:5]
+
+        # Save updated history
+        with open(history_file, "w") as file:
+         json.dump(history, file, indent=4)
+
         return render_template(
 
             "result.html",
@@ -419,9 +444,11 @@ def prediction_api():
 
             prediction_time=result["prediction_time"],
 
-            status=result["status"]
+            status=result["status"],
 
-        )
+            history=history
+
+         )
 
     except Exception as error:
 

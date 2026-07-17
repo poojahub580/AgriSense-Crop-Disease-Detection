@@ -78,6 +78,19 @@ alt="Uploaded Image">
 
 <div class="section">
 
+<h3>🖼 Image Details</h3>
+
+<ul>
+    <li><strong>File Name:</strong> Uploaded Leaf Image</li>
+    <li><strong>File Type:</strong> {{ image_file.split('.')[-1].upper() }}</li>
+    <li><strong>Model:</strong> MobileNetV2 Transfer Learning</li>
+    <li><strong>Dataset:</strong> PlantVillage</li>
+</ul>
+
+</div>
+
+<div class="section">
+
 <h3>🌾 Crop</h3>
 
 <p>{{ crop }}</p>
@@ -96,8 +109,6 @@ alt="Uploaded Image">
 
 <h3>📊 Confidence</h3>
 
-<p>{{ confidence }}</p>
-
 <div class="progress">
 
 <div
@@ -109,6 +120,28 @@ data-width="{{ confidence }}">
 </div>
 
 </div>
+
+{% set conf = confidence.replace('%','')|float %}
+
+{% if conf >= 90 %}
+
+<p class="confidence-high">
+🟢 High Confidence Prediction
+</p>
+
+{% elif conf >= 70 %}
+
+<p class="confidence-medium">
+🟡 Medium Confidence Prediction
+</p>
+
+{% else %}
+
+<p class="confidence-low">
+🔴 Low Confidence Prediction
+</p>
+
+{% endif %}
 
 </div>
 
@@ -237,6 +270,27 @@ data-width="{{ confidence }}">
 
 <p>{{ status }}</p>
 
+</div>
+
+<div class="section">
+    <h3>🕒 Prediction History</h3>
+
+    {% if history %}
+    <ul class="history-list">
+        {% for item in history %}
+        <li>
+            <strong>{{ item.crop }}</strong> -
+            {{ item.prediction }}
+            ({{ item.confidence }})
+            <br>
+            <span class="history-date">{{ item.time }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No previous predictions available.</p>
+    {% endif %}
+    
 </div>
 
 <div class="prediction-note">
