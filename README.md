@@ -3,47 +3,47 @@
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange)
 ![Flask](https://img.shields.io/badge/Flask-Web%20API-black)
-![License](https://img.shields.io/badge/Project-Final%20Year-green)
+![Deep Learning](https://img.shields.io/badge/MobileNetV2-Transfer%20Learning-success)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
 
 ---
 
 # 📖 Overview
 
-AgriSense is an AI-powered crop disease detection system developed using **TensorFlow**, **MobileNetV2 Transfer Learning**, and **Flask**. The application detects diseases from crop leaf images and provides detailed prediction results, confidence scores, disease information, symptoms, recommendations, prevention tips, and prediction status through a modern web interface.
+AgriSense is an AI-powered crop disease detection system developed using **TensorFlow**, **MobileNetV2 Transfer Learning**, and **Flask**. The application detects diseases from crop leaf images and provides prediction results with confidence scores, disease information, symptoms, recommendations, prevention tips, and prediction status through a responsive web interface.
 
-The model is trained using the **PlantVillage Dataset** and supports disease classification for Tomato, Potato, and Bell Pepper crops.
+The model is trained on the **PlantVillage Dataset** and supports disease classification for **Tomato**, **Potato**, and **Bell Pepper** crops.
 
 ---
 
 # ✨ Features
 
 - AI-powered Crop Disease Detection
-- MobileNetV2 Transfer Learning Model
+- MobileNetV2 Transfer Learning
 - PlantVillage Dataset Support
 - Image Upload & Prediction
-- Prediction Summary Dashboard
-- Confidence Score with Progress Bar
+- Confidence Score Display
 - Disease Description
 - Symptoms Information
 - Treatment Recommendations
 - Prevention Guidelines
-- Prediction Timestamp
 - Prediction Status
-- Modern Responsive Web UI
+- Responsive Web Interface
 - Flask REST API
 - Health Check API
 - Postman API Testing
-- Image Preprocessing & Normalization
+- Automatic EDA Report Generation
+- Automatic Model Evaluation Reports
 
 ---
 
 # 📂 Dataset
 
-**Dataset Used**
+## Dataset
 
 PlantVillage Dataset
 
-**Supported Crop Disease Classes (15)**
+## Supported Classes (15)
 
 - Pepper__bell___Bacterial_spot
 - Pepper__bell___healthy
@@ -63,56 +63,88 @@ PlantVillage Dataset
 
 ---
 
+# 📈 Exploratory Data Analysis
+
+EDA was performed before model training to understand the dataset.
+
+Generated reports include:
+
+- Class Distribution
+- Class Distribution Pie Chart
+- Sample Images
+- Image Dimension Analysis
+- Image Dimension Box Plot
+- Dataset Statistics
+
+All generated graphs are automatically saved inside the **reports/** folder.
+
+---
+
 # 📊 Model Performance
 
-- Deep Learning Framework: TensorFlow/Keras
-- Model Architecture: MobileNetV2 Transfer Learning
+- Framework: TensorFlow / Keras
+- Model: MobileNetV2 Transfer Learning
 - Dataset: PlantVillage
-- Supported Classes: 15
-- Input Image Size: 224 × 224
+- Classes: 15
+- Input Size: 224 × 224
+- Validation Accuracy: **91.79%**
 - Prediction Time: Less than 2 seconds
-- Prediction Output: Disease Name, Confidence Score, Symptoms, Prevention and Recommendation
+
+Generated Evaluation Reports:
+
+- Confusion Matrix
+- Classification Report
+- Precision
+- Recall
+- F1-Score
+- Model Metrics
 
 ---
 
 # 🛠 Technologies Used
 
-### Programming
+## Programming
 
 - Python
 
-### Deep Learning
+## Deep Learning
 
 - TensorFlow
 - Keras
+- MobileNetV2
 
-### Backend
+## Backend
 
 - Flask
 
-### Frontend
+## Frontend
 
 - HTML5
 - CSS3
 - JavaScript
-- Jinja2 Templates
+- Jinja2
 
-### Libraries
+## Libraries
 
 - NumPy
-- OpenCV
 - Pillow
+- OpenCV
 - Scikit-learn
+- Matplotlib
 
-### API Testing
+## Tools
 
+- VS Code
+- Git
+- GitHub
 - Postman
+- Jupyter Notebook
 
 ---
 
 # 📁 Project Structure
 
-```
+```text
 AgriSense-Crop-Disease-Detection/
 │
 ├── artifacts/
@@ -121,7 +153,18 @@ AgriSense-Crop-Disease-Detection/
 ├── datasets/
 │   └── PlantVillage/
 │
+├── notebooks/
+│   ├── eda.ipynb
+│   └── model_evaluation.ipynb
+│
 ├── reports/
+│   ├── class_distribution.png
+│   ├── class_distribution_pie.png
+│   ├── image_dimension_boxplot.png
+│   ├── sample_images.png
+│   ├── confusion_matrix.png
+│   ├── classification_report.txt
+│   └── model_metrics.txt
 │
 ├── static/
 │   ├── css/
@@ -134,15 +177,13 @@ AgriSense-Crop-Disease-Detection/
 │
 ├── uploads/
 │
-├── notebooks/
-│   └── eda.ipynb
-│
 ├── api_service.py
 ├── cnn_training.py
-├── disease_prediction.py
-├── image_preprocessing.py
-├── model_evaluation.py
 ├── transfer_learning.py
+├── image_preprocessing.py
+├── disease_prediction.py
+├── dataset_statistics.py
+├── model_performance.py
 ├── requirements.txt
 └── README.md
 ```
@@ -208,13 +249,13 @@ Example Response
 
 # ⚙ Installation
 
-Clone Repository
+Clone the repository
 
 ```bash
 git clone https://github.com/poojahub580/AgriSense-Crop-Disease-Detection
 ```
 
-Move into project folder
+Move into the project
 
 ```bash
 cd AgriSense-Crop-Disease-Detection
@@ -232,7 +273,7 @@ Run the application
 python api_service.py
 ```
 
-Open in browser
+Open your browser
 
 ```
 http://127.0.0.1:5000
@@ -242,26 +283,7 @@ http://127.0.0.1:5000
 
 # 📷 Screenshots
 
-### Home Page
-![Home Page](screenshots/home_page.png)
-
-### Features
-![Features](screenshots/features.png)
-
-### Prediction Summary
-![Prediction Summary](screenshots/prediction_summary.png)
-
-### Prediction Result
-![Prediction Result](screenshots/prediction_result.png)
-
-### Confidence Progress Bar
-![Confidence Bar](screenshots/confidence_bar.png)
-
-### Prediction Actions
-![Prediction Actions](screenshots/prediction_actions.png)
-
-### API Running
-![API Running](screenshots/api_running.png)
+Add screenshots inside the **screenshots/** folder and update this section if available.
 
 ---
 
@@ -269,19 +291,20 @@ http://127.0.0.1:5000
 
 - ✔ Dataset Preprocessing Completed
 - ✔ Exploratory Data Analysis Completed
+- ✔ Dataset Statistics Generated
 - ✔ CNN Model Developed
 - ✔ MobileNetV2 Transfer Learning Implemented
 - ✔ Model Evaluation Completed
+- ✔ Confusion Matrix Generated
+- ✔ Classification Report Generated
+- ✔ Precision, Recall & F1-Score Generated
+- ✔ Automatic Report Generation
 - ✔ Flask REST API Developed
-- ✔ Image Upload System Implemented
-- ✔ Prediction Summary Dashboard Completed
-- ✔ Confidence Progress Bar Added
-- ✔ Disease Description, Symptoms & Prevention Added
 - ✔ Health Endpoint Tested
 - ✔ Prediction Endpoint Tested
 - ✔ Postman API Testing Completed
 - ✔ End-to-End Disease Prediction Verified
-- ✔ Modern Responsive User Interface Completed
+- ✔ Responsive Web Interface Completed
 - ✔ Ready for Final Demonstration
 
 ---
@@ -295,7 +318,7 @@ http://127.0.0.1:5000
 - Prediction History
 - PDF Report Generation
 - Multi-language Support
-- Additional Crop Support
+- More Crop Categories
 - Improved Model Accuracy
 
 ---
@@ -304,6 +327,10 @@ http://127.0.0.1:5000
 
 **Pooja Gupta**
 
-AgriSense Crop Disease Detection
+AgriSense – Crop Disease Detection using TensorFlow, Flask, and MobileNetV2 Transfer Learning.
 
-Developed using **TensorFlow**, **Flask**, and **MobileNetV2 Transfer Learning**.
+---
+
+# 📄 License
+
+This project was developed for educational and internship purposes.

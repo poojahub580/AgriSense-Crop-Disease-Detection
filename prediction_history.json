@@ -2,6 +2,18 @@
     {
         "crop": "Potato",
         "prediction": "Potato -  Early blight",
+        "confidence": "98.69%",
+        "time": "18 July 2026 12:50 PM"
+    },
+    {
+        "crop": "Potato",
+        "prediction": "Potato -  Early blight",
+        "confidence": "98.69%",
+        "time": "17 July 2026 11:30 PM"
+    },
+    {
+        "crop": "Potato",
+        "prediction": "Potato -  Early blight",
         "confidence": "99.99%",
         "time": "17 July 2026 10:15 PM"
     },
@@ -16,17 +28,5 @@
         "prediction": "Tomato Septoria leaf spot",
         "confidence": "99.9%",
         "time": "17 July 2026 08:55 PM"
-    },
-    {
-        "crop": "Tomato",
-        "prediction": "Tomato - Tomato YellowLeaf - Curl Virus",
-        "confidence": "100.0%",
-        "time": "17 July 2026 02:43 PM"
-    },
-    {
-        "crop": "Tomato",
-        "prediction": "Tomato Septoria leaf spot",
-        "confidence": "42.12%",
-        "time": "17 July 2026 02:39 PM"
     }
 ]
